@@ -13,6 +13,7 @@ module.exports = sequelize
 app.use(bodyParser.json());
 app.use(require("./controllers/index"))
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+    await sequelize.sync();
     console.log(`Server started on port ${PORT}`)
 })
