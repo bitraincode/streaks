@@ -20,6 +20,12 @@ const TaskService = {
                 ownerUsername,
             }
         })
+    },
+    updateTaskName: async (id, taskName, ownerUsername) => {
+        if (!await Tasks.findOne({ where: {id, ownerUsername} } )) {
+            throw 404
+        }
+        await Tasks.update({taskName}, { where: {id, ownerUsername} })
     }
 }
 

@@ -20,4 +20,10 @@ taskRouter.get("/", (req, res) => {
         })
 })
 
+taskRouter.put("/:id", (req, res) => {
+    TaskService.updateTaskName(req.params.id, req.body.taskName, req.body.ownerUsername)
+        .then(() => res.sendStatus(200))
+        .catch( err => res.sendStatus(err))
+})
+
 module.exports = taskRouter
