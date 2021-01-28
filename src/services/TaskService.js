@@ -26,6 +26,14 @@ const TaskService = {
             throw 404
         }
         await Tasks.update({taskName}, { where: {id, ownerUsername} })
+    },
+    deleteTask: async (id, ownerUsername) => {
+        if (!await Tasks.findOne({ where: {id, ownerUsername} } )) {
+            throw 404
+        }
+        await Tasks.destroy({where: { id }})
+            .then(() => {return 200})
+            .catch(err => { console.log(err) })
     }
 }
 

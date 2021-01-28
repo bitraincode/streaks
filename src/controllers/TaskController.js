@@ -26,4 +26,10 @@ taskRouter.put("/:id", (req, res) => {
         .catch( err => res.sendStatus(err))
 })
 
+taskRouter.delete("/:id", (req, res) => {
+    TaskService.deleteTask(req.params.id, req.body.ownerUsername)
+        .then(() => res.sendStatus(200))
+        .catch( err => res.sendStatus(err))
+})
+
 module.exports = taskRouter
