@@ -1,19 +1,26 @@
 const express = require('express'),
-    app = express(),
-    PORT = 3000,
     bodyParser = require('body-parser'),
-    { Sequelize } = require('sequelize'),
-    sequelize = new Sequelize('streaks', 'root', 'root', {
-            host: "localhost",
-            dialect: "mysql"
-        })
+    db = require("./db"), 
+    { ServiceError } = require('./error')
 
-module.exports = sequelize
+const app = express(),
+    PORT = 3000
 
 app.use(bodyParser.json());
 app.use(require("./controllers/index"))
 
+
+app.use(function (err, req, res, next) {
+    if (err instanceof ServiceError) {
+        res.status(err.statusCode).send({
+            message: err.message
+        })
+    } else {
+        next(err)
+    }
+})
+
 app.listen(PORT, async () => {
-    await sequelize.sync();
+    await db.sync();
     console.log(`Server started on port ${PORT}`)
 })

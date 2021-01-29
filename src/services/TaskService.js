@@ -1,39 +1,35 @@
-const { Tasks } = require("../models/index")
+const { ServiceError } = require("../error")
+const { Task } = require("../models")
 
 const TaskService = {
     createTask: async (taskName, ownerUsername) => {
-        if (await Tasks.findOne({ where: {taskName, ownerUsername} } )) {
-            throw {
-                statusCode: 409,
-                message: "Task is already exist"
-            }
+        if (await Task.findOne({ where: { taskName, ownerUsername } } )) {
+            throw new ServiceError(400, "Task already exists.")
         } else {
-            await Tasks.create({
+            await Task.create({
                 taskName,
                 ownerUsername
             })
         }
     },
-    getAllTask: async (ownerUsername) => {
-        return await Tasks.findAll({
+    getAllTasks: async (ownerUsername) => {
+        return await Task.findAll({
             where: {
                 ownerUsername,
             }
         })
     },
     updateTaskName: async (id, taskName, ownerUsername) => {
-        if (!await Tasks.findOne({ where: {id, ownerUsername} } )) {
-            throw 404
+        if (!await Task.findOne({ where: { id, ownerUsername } })) {
+            throw new ServiceError(404, "Given task was not found.")
         }
-        await Tasks.update({taskName}, { where: {id, ownerUsername} })
+        await Task.update({taskName}, { where: {id, ownerUsername} })
     },
     deleteTask: async (id, ownerUsername) => {
-        if (!await Tasks.findOne({ where: {id, ownerUsername} } )) {
-            throw 404
+        if (!await Task.findOne({ where: {id, ownerUsername} } )) {
+            throw new ServiceError(404, "Given task was not found.")
         }
-        await Tasks.destroy({where: { id }})
-            .then(() => {return 200})
-            .catch(err => { console.log(err) })
+        await Task.destroy({ where: { id } })
     }
 }
 

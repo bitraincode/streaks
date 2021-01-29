@@ -1,35 +1,30 @@
-const taskRouter = require("express").Router(),
-    { TaskService } = require("../services/index")
+const { TaskService } = require("../services"),
+    { catchError } = require("../util")
 
-taskRouter.post("/", (req, res) => {
-    TaskService.createTask(req.body.taskName, req.body.ownerUsername)
-        .then( () => {
-            res.sendStatus(200)
-    })
-        .catch(err => {
-            res.status(err.statusCode).send(err.message)
-        })
-})
+const router = require("express").Router()
 
-taskRouter.get("/", (req, res) => {
-    TaskService.getAllTask(req.body.ownerUsername).then( tasks => {
-        res.send(JSON.stringify(tasks))
-    })
-        .catch( err => {
-            res.send(err)
-        })
-})
+router.post("/tasks", catchError(async (req, res, next) => {
+    await TaskService.createTask(req.body.taskName, req.body.ownerUsername)
+  
+    res.sendStatus(201)
+}))
 
-taskRouter.put("/:id", (req, res) => {
-    TaskService.updateTaskName(req.params.id, req.body.taskName, req.body.ownerUsername)
-        .then(() => res.sendStatus(200))
-        .catch( err => res.sendStatus(err))
-})
+router.get("/tasks", catchError(async (req, res, next) => {
+    const tasks = await TaskService.getAllTasks(req.body.ownerUsername)
 
-taskRouter.delete("/:id", (req, res) => {
-    TaskService.deleteTask(req.params.id, req.body.ownerUsername)
-        .then(() => res.sendStatus(200))
-        .catch( err => res.sendStatus(err))
-})
+    res.status(200).json(tasks)
+}))
 
-module.exports = taskRouter
+router.put("/tasks/:id", catchError(async (req, res, next) => {
+    await TaskService.updateTaskName(req.params.id, req.body.taskName, req.body.ownerUsername)
+    
+    res.sendStatus(200)
+}))
+
+router.delete("/tasks/:id", catchError(async (req, res, next) => {
+    await TaskService.deleteTask(req.params.id, req.body.ownerUsername)
+    
+    res.sendStatus(204)
+}))
+
+module.exports = router
