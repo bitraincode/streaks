@@ -1,8 +1,8 @@
-const db = require("../db")
+const db = require("../db"),
+    { DataTypes } = require("sequelize")
 
-const TaskMark = db.define("TaskMarks", {},
-    {
-    updatedAt: false
-    })
+const TaskMark = db.define("TaskMarks", {
+    done: DataTypes.BOOLEAN
+})
 
 module.exports = TaskMark
