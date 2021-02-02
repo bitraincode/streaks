@@ -15,7 +15,7 @@ router.get("/tasks", catchError(async (req, res, next) => {
     res.status(200).json(tasks)
 }))
 
-router.put("/tasks/:id", catchError(async (req, res, next) => {
+router.patch("/tasks/:id", catchError(async (req, res, next) => {
     await TaskService.updateTaskName(req.params.id, req.body.taskName, req.body.ownerUsername)
     
     res.sendStatus(200)

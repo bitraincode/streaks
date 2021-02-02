@@ -12,7 +12,7 @@ router.post("/:taskId/marks", catchError(async (req, res, next) => {
     res.sendStatus(200)
 }))
 
-router.put("/:taskId/marks/:markId", catchError (async (req, res, next) => {
+router.patch("/:taskId/marks/:markId", catchError (async (req, res, next) => {
     await TaskMarkService.updateMark(req.params.taskId, req.params.markId, req.body.ownerUsername, req.body.isDone)
     res.sendStatus(201)
 }))
