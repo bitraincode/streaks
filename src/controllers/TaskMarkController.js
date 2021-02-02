@@ -17,4 +17,9 @@ router.put("/:taskId/marks/:markId", catchError (async (req, res, next) => {
     res.sendStatus(201)
 }))
 
+router.delete("/:taskId/marks/:markId", catchError( async (req, res, next) => {
+    await TaskMarkService.deleteMark(req.params.taskId, req.params.markId, req.body.ownerUsername)
+    res.sendStatus(200)
+}))
+
 module.exports = router

@@ -47,6 +47,14 @@ const TaskMarkService = {
                 await mark.save()
             })
     },
+    deleteMark: async (taskId, markId, username) => {
+        if (! await userCheck(username, taskId)) {
+            throw new ServiceError(403, "Forbidden error")
+        }
+        await TaskMark.findByPk(markId).then( mark => {
+            mark.destroy()
+        })
+    }
 }
 
 module.exports = TaskMarkService
