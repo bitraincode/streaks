@@ -3,6 +3,8 @@ const express = require('express'),
     db = require("./db"), 
     { ServiceError } = require('./error')
 
+require("dotenv").config()
+
 const app = express(),
     PORT = 3000
 
