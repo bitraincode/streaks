@@ -8,7 +8,7 @@ router.get("/:taskId/marks", catchError(async (req, res, next) => {
 }))
 
 router.post("/:taskId/marks", catchError(async (req, res, next) => {
-    await TaskMarkService.createMark(req.params.taskId, req.body.ownerUsername, req.body.isDone)
+    await TaskMarkService.createMark(req.params.taskId, req.body.ownerUsername, req.body.isDone, req.body.date)
     res.sendStatus(200)
 }))
 

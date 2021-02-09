@@ -1,6 +1,8 @@
 const {ServiceError} = require("../error"),
     { Task } = require("../models"),
-    { TaskMark } = require("../models");
+    { TaskMark } = require("../models"),
+    { Op } = require("sequelize")
+;
 
 userCheck = async (username, taskId) => {
     return await Task.findByPk(taskId)
@@ -10,22 +12,29 @@ userCheck = async (username, taskId) => {
 }
 
 const TaskMarkService = {
-    createMark: async (taskId, username, done) => {
+    createMark: async (taskId, username, done, date) => {
         if (!await userCheck(username, taskId)) {
             throw new ServiceError(403, "Forbidden error")
         }
-        await TaskMark.create({taskId, done})
 
-        // if (new Date().toLocaleDateString() === lastMark.createdAt.toLocaleDateString() ) {
-        //     throw new ServiceError(400, "You have already marked this task today")
-        // }
-        // const lastMark = await TaskMark.findAndCountAll({
-        //     where: {
-        //         taskId
-        //     }
-        // }).then(res => {
-        //     return res.rows[res.count-1]
-        // })
+        date = new Date(Date.parse(date))
+        date.setHours(0, 0, 0, 0)
+        date = date.getTime()
+
+        const mark = await TaskMark.findAll({
+            where: {
+                taskId,
+                createdAt: {
+                    [Op.between]: [ date, date + 86399000 ]
+                }
+            }
+        })
+
+        if (mark.length) {
+            throw new ServiceError(400, "You have already marked this task today")
+        }
+        await TaskMark.create({taskId, done, createdAt: date})
+
     },
     getMarksByTaskId: async (username, id) => {
         if (await userCheck(username, id)) {
