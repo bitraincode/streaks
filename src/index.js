@@ -1,16 +1,18 @@
 const express = require('express'),
     bodyParser = require('body-parser'),
     db = require("./db"), 
-    { ServiceError } = require('./error')
+    { ServiceError } = require('./error'),
+    authenticateToken = require("./authenticateToken");
 
 require("dotenv").config()
 
 const app = express(),
     PORT = 3000
 
+app.use(authenticateToken)
+
 app.use(bodyParser.json());
 app.use(require("./controllers/index"))
-
 
 app.use(function (err, req, res, next) {
     if (err instanceof ServiceError) {
